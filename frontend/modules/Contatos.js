@@ -21,26 +21,39 @@ export default class Contatos {
 
   validate(e) {
     const el = e.target;
-    const nomeImput = el.querySelector('input[name="nome"]');
-    const emailImput = el.querySelector('input[name="email"]');
+    const nomeInput = el.querySelector('input[name="nome"]');
+    const emailInput = el.querySelector('input[name="email"]');
     const telefoneInput = el.querySelector('input[name="telefone"]');
+
     let erro = false;
 
-    if (emailImput.value.length <= 0 && telefoneInput.value.length <= 0) {
-      this.criaErroTelEmail(
-        "Pelo menos um campo deve ser enviado: Email ou Telefone",
-      );
+    const nome = nomeInput.value.trim();
+    const email = emailInput.value.trim();
+    const telefone = telefoneInput.value.trim();
+
+    console.log("Telefone digitado:", telefone);
+    console.log("Tamanho:", telefone.length);
+
+    // valida nome
+    if (!nome) {
+      this.criaErroNome("Nome é obrigatório");
+      erro = true;
+    } else {
+      this.limpaErro(document.getElementById("erro-msg-nome"));
+    }
+
+    // email ou telefone existe ?
+    if (!email && !telefone) {
+      this.criaErroTelEmail("Informe email ou telefone");
       erro = true;
     } else {
       this.limpaErro(document.getElementById("erro-msg-tel-email"));
     }
 
-    if (telefoneInput.value.length <= 0) {
-      if (
-        emailImput.value.length <= 0 &&
-        !validator.isEmail(emailImput.value)
-      ) {
-        this.criaErroEmail("Email invalido");
+    // valida email
+    if (email) {
+      if (!validator.isEmail(email)) {
+        this.criaErroEmail("Email inválido");
         erro = true;
       } else {
         this.limpaErro(document.getElementById("erro-msg-email"));
@@ -49,23 +62,19 @@ export default class Contatos {
       this.limpaErro(document.getElementById("erro-msg-email"));
     }
 
-    if (nomeImput.value.length <= 0) {
-      this.criaErroNome("Nome é um campo obrigatorio");
-      erro = true;
+    // valida telefone
+    if (telefone) {
+      if (telefone.length > 17) {
+        this.criaErroTelefone("Telefone muito grande");
+        erro = true;
+      } else {
+        this.limpaErro(document.getElementById("erro-msg-telefone"));
+      }
     } else {
-      this.limpaErro(document.getElementById("erro-msg-nome"));
+      this.limpaErro(document.getElementById("erro-msg-telefone"));
     }
+
     if (!erro) el.submit();
-  }
-
-  criaErroEmail(msg) {
-    const erroDiv = document.createElement("p");
-    erroDiv.innerHTML += msg;
-    erroDiv.className = "alert alert-danger";
-    erroDiv.id = "erro-msg-email";
-
-    const apaga = document.getElementById("erro-msg-email");
-    this.criaDiv(apaga, erroDiv);
   }
 
   criaErroNome(msg) {
@@ -87,6 +96,27 @@ export default class Contatos {
     const apaga = document.getElementById("erro-msg-tel-email");
     this.criaDiv(apaga, erroDiv);
   }
+
+  criaErroEmail(msg) {
+    const erroDiv = document.createElement("p");
+    erroDiv.innerHTML += msg;
+    erroDiv.className = "alert alert-danger";
+    erroDiv.id = "erro-msg-email";
+
+    const apaga = document.getElementById("erro-msg-email");
+    this.criaDiv(apaga, erroDiv);
+  }
+
+  criaErroTelefone(msg) {
+    const erroDiv = document.createElement("p");
+    erroDiv.innerHTML += msg;
+    erroDiv.className = "alert alert-danger";
+    erroDiv.id = "erro-msg-telefone";
+
+    const apaga = document.getElementById("erro-msg-telefone");
+    this.criaDiv(apaga, erroDiv);
+  }
+
 
   criaDiv(apaga, erroDiv) {
     if (apaga) {

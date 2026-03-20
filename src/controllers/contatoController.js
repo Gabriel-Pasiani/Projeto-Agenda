@@ -8,6 +8,7 @@ exports.index = (req, res) => {
 
 exports.register = async (req, res) => {
   try {
+    req.body.user = req.user._id;
     const contato = new Contato(req.body);
     await contato.register();
 
@@ -19,9 +20,7 @@ exports.register = async (req, res) => {
 
     req.flash("success", "Contato registrado com sucesso");
     req.session.save(() =>
-     // res.redirect(`/contato/index/${contato.contato._id}`),
-  res.redirect(`/`),
-
+    res.redirect(`/`),
 
     );
     return;
@@ -50,7 +49,6 @@ exports.edit = async function (req, res) {
     if (contato.errors.length > 0) {
       req.flash("errors", contato.errors);
       req.session.save(() => 
-        //res.redirect(`/contato/index/${contato.contato._id}`),
        res.redirect(`/contato/index/${req.params.id}`),
       );
       return;
@@ -58,8 +56,6 @@ exports.edit = async function (req, res) {
 
     req.flash("success", "Contato editado com sucesso");
     req.session.save(() => 
-      // res.redirect(`/contato/index/${contato.contato._id}`),
-      // res.redirect(`/contato/index/${req.params.id}`),
      res.redirect(`/contato/index/${req.params.id}`),
 
     );

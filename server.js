@@ -25,6 +25,7 @@ const {
 } = require("./src/middlewares/middlewares");
 const { Dirent } = require("fs");
 const { contentSecurityPolicy } = require("helmet");
+const { injetaUsuario } = require("./src/middlewares/middlewares"); // <---
 
 app.use(
   helmet({
@@ -60,6 +61,8 @@ const sessionOptions = session({
 
 app.use(sessionOptions);
 app.use(flash());
+
+app.use(injetaUsuario);
 
 app.set("views", path.resolve(__dirname, "src", "views"));
 app.set("view engine", "ejs");

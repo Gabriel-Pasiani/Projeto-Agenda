@@ -14,4 +14,3 @@ const editarContato = new Contatos('.form-edit')
 novoContato.init()
 editarContato.init()
 
-import './assets/css/style.css';

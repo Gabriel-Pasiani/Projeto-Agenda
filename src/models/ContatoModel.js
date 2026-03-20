@@ -7,6 +7,11 @@ const ContatoSchema = new mongoose.Schema({
   email: { type: String, required: false, default: "" },
   telefone: { type: String, required: false, default: "" },
   criadoEm: { type: Date, default: Date.now },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 const ContatoModel = mongoose.model("Contato", ContatoSchema);
@@ -36,10 +41,17 @@ Contato.prototype.valida = function () {
   if (!this.body.email && !this.body.telefone) {
     this.errors.push("Pelo menos um contato precisa ser enviado: email ou telefone");
   }
+  if (this.body.telefone) {
+    if (this.body.length > 17) {
+      this.errors.push("Telefone muito grande");
+    }
+  }
 };
 
 Contato.prototype.cleanUp = function () {
   for (const key in this.body) {
+    if (key === "user") continue;
+
     if (typeof this.body[key] !== "string") {
       this.body[key] = "";
     }
@@ -50,6 +62,7 @@ Contato.prototype.cleanUp = function () {
     sobrenome: this.body.sobrenome,
     email: this.body.email,
     telefone: this.body.telefone,
+    user: this.body.user,
   };
 };
 
@@ -69,8 +82,10 @@ Contato.buscaPorId = async function (id) {
   return contato;
 };
 
-Contato.buscaContatos = async function () {
-  const contatos = await ContatoModel.find().sort({ criadoEm: -1 });
+Contato.buscaContatos = async function (userId) {
+  const contatos = await ContatoModel.find({ user: userId }).sort({
+    criadoEm: -1,
+  });
   return contatos;
 };
 
